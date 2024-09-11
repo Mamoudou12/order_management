@@ -7,7 +7,8 @@ const connPool = mysql.createPool({
   password: 'password123',
   database: 'order_management',
   waitForConnections: true,
-  connectionLimit: 2,
+  connectionLimit: 100,
+  connectTimeout: false
 });
 
 connPool.getConnection().then(() => {

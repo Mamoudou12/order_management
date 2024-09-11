@@ -27,6 +27,11 @@ cd order_management
 ```bash
 npm install
 ```
+- Acceder au dossier src:
+```bash
+cd src
+```
+
 3. Configurez la base de données MySQL :
 [Lien du script sql](https://drive.google.com/file/d/18su-etmc9z8_-W4Bm5Dkw9NkgnX-Bx4C/view?usp=drive_link)
 
