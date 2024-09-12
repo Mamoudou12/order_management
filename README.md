@@ -42,18 +42,25 @@ mysql -u votre_utilisateur -p order_management < schema.sql
 ```
 
 4. Configurez les paramètres de connexion à la base de données :
+- Le fichier de configuration de la base de données se trouve à src/db.js.
 - Mettez à jour les informations de connexion dans db.js avec vos identifiants MySQL :
 ```bash
-const mysql = require('mysql2/promise');
+const mysql = require ('mysql2/promise');
 
-const connection = mysql.createPool({
+const connPool = mysql.createPool({
   host: 'localhost',
   user: 'votre_utilisateur',
   password: 'votre_mot_de_passe',
-  database: 'order_management'
+  database: 'order_management',
+  waitForConnections: true,
+  connectionLimit: 2,
+  connectTimeout: false
 });
 
-module.exports = connection;
+connPool.getConnection().then(() => {
+    console.log("CONNECTED")
+})
+module.exports = connPool;
 ```
 ## Utilisation
 ### Lancer l'application
