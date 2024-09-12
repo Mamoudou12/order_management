@@ -60,7 +60,7 @@ async function addPurchaseOrder(date, delivery_address, track_number, status, cu
     }
     console.log('Détails de la commande ajoutés avec succès');
   } catch (err) {
-    console.error('Erreur lors de l\'ajout de la commande d\'achat :', err.message);
+    console.error('Erreur lors de l\'ajout de la commande d\'achat');
   }
 }
 
@@ -129,23 +129,44 @@ async function deletePurchaseOrder(id) {
   }
 }
 
-// Fonction pour lister les détails de commande
+// Fonction pour afficher une commande d'achat spécifique par ID
+async function getPurchaseOrderById(orderId) {
+  try {
+    const [rows] = await connection.query('SELECT * FROM purchase_orders WHERE id = ?', [orderId]);
+    if (rows.length === 0) {
+      console.log('Aucune commande d\'achat trouvée avec cet ID.');
+      return null;
+    }
+    console.log('Commande d\'achat :');
+    console.table(rows);
+    return rows[0];
+  } catch (err) {
+    console.error('Erreur lors de la récupération de la commande d\'achat :', err.message);
+    return null;
+  }
+}
+
+// Fonction pour lister les détails de commande avec un affichage séparé
 async function listOrderDetails(orderId) {
   try {
-    const [rows] = await connection.execute('SELECT * FROM order_details WHERE order_id = ?', [orderId]);
-    if (rows.length === 0) {
+    // Afficher les informations de la commande avant les détails
+    const purchaseOrder = await getPurchaseOrderById(orderId);
+    if (!purchaseOrder) {
+      return; // Si la commande n'existe pas, arrêter ici
+    }
+
+    // Afficher les détails de la commande
+    const [details] = await connection.execute('SELECT * FROM order_details WHERE order_id = ?', [orderId]);
+    if (details.length === 0) {
       console.log('Aucun détail trouvé pour cette commande.');
       return;
     }
     console.log('\nDétails de la commande :');
-    rows.forEach(detail => {
-      console.log(`ID: ${detail.id}, Quantité: ${detail.quantity}, Prix: ${detail.price}, ID Produit: ${detail.product_id}`);
-    });
+    console.table(details);
   } catch (error) {
     console.error('Erreur lors de la récupération des détails de la commande :', error.message);
   }
 }
-
 // Fonction pour mettre à jour les détails d'une commande
 async function updateOrderDetails(orderId, detailId, quantity, price, productId) {
   try {
