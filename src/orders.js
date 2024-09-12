@@ -125,7 +125,7 @@ async function deletePurchaseOrder(id) {
       console.log('Commande d\'achat supprimée avec succès');
     }
   } catch (err) {
-    console.error('Erreur lors de la suppression de la commande d\'achat :', err.message);
+    console.error('Erreur lors de la suppression de la commande d\'achat elle est probablément liée à un payement veuillez d\'abord supprimer le payement de la commande');
   }
 }
 
