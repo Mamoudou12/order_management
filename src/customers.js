@@ -93,7 +93,7 @@ async function deleteCustomer(id) {
       console.log('Client supprimé avec succès');
     }
   } catch (err) {
-    console.error('Erreur lors de la suppression du client:', err);
+    console.error('Erreur lors de la suppression du client, pour se faire vous devez d\'abord supprimer toute les commande liées à ce client');
   }
 }
 
