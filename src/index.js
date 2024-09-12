@@ -1,8 +1,8 @@
-const connection = require('./db'); // Assurez-vous que ce fichier configure et exporte votre connexion MySQL
+const connection = require('./db'); 
 const readlineSync = require('readline-sync');
 const customer = require('./customers');
 const product = require('./products');
-const order = require('./orders'); // Importer le module des commandes
+const order = require('./orders'); 
 const payment = require('./payments');
 
 // Fonction principale du menu
