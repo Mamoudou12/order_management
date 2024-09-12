@@ -19,14 +19,6 @@ async function addPurchaseOrder(date, delivery_address, track_number, status, cu
       throw new Error('Erreur : Les détails de la commande doivent être renseignés.');
     }
 
-    // Ajouter la commande d'achat
-    const [result] = await connection.query(
-      'INSERT INTO purchase_orders (date, delivery_address, track_number, status, customer_id) VALUES (?, ?, ?, ?, ?)',
-      [date, delivery_address, track_number, status, customer_id]
-    );
-    const purchaseOrderId = result.insertId;
-    console.log('Commande d\'achat ajoutée avec succès, ID :', purchaseOrderId);
-
     // Afficher les détails de la commande pour confirmation
     console.log('\nDétails de la commande à ajouter :');
     console.table(order_details);
@@ -36,10 +28,15 @@ async function addPurchaseOrder(date, delivery_address, track_number, status, cu
 
     if (!confirm) {
       console.log('Les détails de la commande ont été annulés.');
-      // Supprimer la commande d'achat si l'utilisateur annule
-      await connection.query('DELETE FROM purchase_orders WHERE id = ?', [purchaseOrderId]);
-      return;
+      return; // Annuler l'opération si l'utilisateur ne confirme pas
     }
+
+    // Ajouter la commande d'achat
+    const [result] = await connection.query(
+      'INSERT INTO purchase_orders (date, delivery_address, track_number, status, customer_id) VALUES (?, ?, ?, ?, ?)',
+      [date, delivery_address, track_number, status, customer_id]
+    );
+    const purchaseOrderId = result.insertId;
 
     // Ajouter les détails de la commande
     for (const detail of order_details) {
@@ -58,11 +55,12 @@ async function addPurchaseOrder(date, delivery_address, track_number, status, cu
         [detail.quantity, detail.price, purchaseOrderId, detail.product_id]
       );
     }
-    console.log('Détails de la commande ajoutés avec succès');
+    console.log('Commande d\'achat et détails ajoutés avec succès');
   } catch (err) {
-    console.error('Erreur lors de l\'ajout de la commande d\'achat');
+    console.error('Erreur lors de l\'ajout de la commande d\'achat :', err.message);
   }
 }
+
 
 // Fonction pour mettre à jour une commande d'achat et ses détails
 async function updatePurchaseOrder(id, date, delivery_address, track_number, status, customer_id) {
