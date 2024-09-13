@@ -33,7 +33,7 @@ cd src
 ```
 
 3. Configurez la base de données MySQL :
-[Lien du script sql](https://drive.google.com/file/d/18su-etmc9z8_-W4Bm5Dkw9NkgnX-Bx4C/view?usp=drive_link)
+[Lien du script sql](https://drive.google.com/file/d/1tLd6mBEs56iEgI4j1Dani-W7pWYhPZhz/view?usp=drive_link)
 
 - Créez une base de données MySQL nommée order_management.
 
