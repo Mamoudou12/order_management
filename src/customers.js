@@ -41,6 +41,7 @@ async function listCustomers() {
 
 // Fonction pour ajouter un client avec validation
 async function addCustomer(name, address, email, phone) {
+  // Validation des champs
   const errors = validateCustomerFields(name, address, email, phone);
   if (errors.length > 0) {
     console.error('Erreur(s) de validation:', errors.join(', '));
@@ -54,12 +55,13 @@ async function addCustomer(name, address, email, phone) {
     );
     console.log('Client ajouté avec succès, ID:', result.insertId);
   } catch (err) {
-    console.error('Erreur lors de l\'ajout du client:', err);
+    console.error('Erreur lors de l\'ajout du client:', err.message);
   }
 }
 
 // Fonction pour mettre à jour un client avec validation
 async function updateCustomer(id, name, address, email, phone) {
+  // Validation des champs
   const errors = validateCustomerFields(name, address, email, phone);
   if (errors.length > 0) {
     console.error('Erreur(s) de validation:', errors.join(', '));
@@ -93,7 +95,7 @@ async function deleteCustomer(id) {
       console.log('Client supprimé avec succès');
     }
   } catch (err) {
-    console.error('Erreur lors de la suppression du client, pour se faire vous devez d\'abord supprimer toute les commande liées à ce client');
+    console.error('Erreur lors de la suppression du client:', err.message);
   }
 }
 
