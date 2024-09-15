@@ -1,4 +1,5 @@
 const connection = require('./db');
+const moment = require('moment'); 
 
 // Fonction pour lister tous les paiements
 async function listPayments() {
@@ -15,22 +16,30 @@ async function addPayment(date, amount, payment_method, order_id) {
     try {
         // Vérifier que tous les champs sont fournis
         if (!date || !amount || !payment_method || !order_id) {
-            console.error('Erreur : Tous les champs (date, montant, méthode de paiement, ID de commande) sont obligatoires.');
-            return;
+            throw new Error('Tous les champs (date, montant, méthode de paiement, ID de commande) sont obligatoires.');
+        }
+
+        // Validation du format de la date
+        if (!moment(date, 'YYYY-MM-DD', true).isValid()) {
+            throw new Error('La date doit être au format YYYY-MM-DD.');
+        }
+
+        // Validation du montant
+        if (isNaN(amount) || amount <= 0) {
+            throw new Error('Le montant doit être un nombre décimal positif.');
         }
 
         // Vérifier si la commande d'achat avec l'ID existe
         const [orderRows] = await connection.query('SELECT id FROM purchase_orders WHERE id = ?', [order_id]);
 
         if (orderRows.length === 0) {
-            console.error(`Erreur : Aucune commande d'achat trouvée avec l'ID ${order_id}.`);
-            return;
+            throw new Error(`Aucune commande d'achat trouvée avec l'ID ${order_id}.`);
         }
 
-        // Validation du montant
-        if (isNaN(amount) || amount <= 0 || typeof amount !== 'number') {
-            console.error('Erreur : Le montant doit être un nombre décimal positif.');
-            return;
+        // Vérifier la méthode de paiement
+        const validPaymentMethods = ['credit_card', 'Bankily', 'Masrvi']; // Exemple de méthodes acceptées
+        if (!validPaymentMethods.includes(payment_method)) {
+            throw new Error(`Méthode de paiement non valide. Les méthodes valides sont : ${validPaymentMethods.join(', ')}.`);
         }
 
         // Ajouter le paiement
@@ -45,31 +54,40 @@ async function addPayment(date, amount, payment_method, order_id) {
 }
 
 // Fonction pour mettre à jour un paiement
-async function updatePayment(id, date, amount, paymentMethod, orderId) {
+async function updatePayment(id, date, amount, payment_method, order_id) {
     try {
         // Vérifier que tous les champs sont fournis
-        if (!id || !date || !amount || !paymentMethod || !orderId) {
-            console.error('Erreur : Tous les champs (ID, date, montant, méthode de paiement, ID de commande) sont obligatoires.');
-            return;
+        if (!id || !date || !amount || !payment_method || !order_id) {
+            throw new Error('Tous les champs (ID, date, montant, méthode de paiement, ID de commande) sont obligatoires.');
+        }
+
+        // Validation du format de la date
+        if (!moment(date, 'YYYY-MM-DD', true).isValid()) {
+            throw new Error('La date doit être au format YYYY-MM-DD.');
+        }
+
+        // Validation du montant
+        if (isNaN(amount) || amount <= 0) {
+            throw new Error('Le montant doit être un nombre décimal positif.');
         }
 
         // Vérifier si le paiement existe
         const [rows] = await connection.query('SELECT * FROM payments WHERE id = ?', [id]);
 
         if (rows.length === 0) {
-            throw new Error(`Erreur : Aucun paiement trouvé avec l'ID ${id}.`);
+            throw new Error(`Aucun paiement trouvé avec l'ID ${id}.`);
         }
 
-        // Validation du montant
-        if (isNaN(amount) || amount <= 0 || typeof amount !== 'number') {
-            console.error('Erreur : Le montant doit être un nombre décimal positif.');
-            return;
+        // Vérifier la méthode de paiement
+        const validPaymentMethods = ['credit_card', 'Bankily', 'Masrvi'];
+        if (!validPaymentMethods.includes(payment_method)) {
+            throw new Error(`Méthode de paiement non valide. Les méthodes valides sont : ${validPaymentMethods.join(', ')}.`);
         }
 
         // Mettre à jour le paiement
         await connection.query(
             'UPDATE payments SET date = ?, amount = ?, payment_method = ?, order_id = ? WHERE id = ?',
-            [date, amount, paymentMethod, orderId, id]
+            [date, amount, payment_method, order_id, id]
         );
         console.log('Paiement mis à jour avec succès');
     } catch (err) {
@@ -82,8 +100,7 @@ async function deletePayment(id) {
     try {
         // Vérifier que l'ID est fourni
         if (!id) {
-            console.error('Erreur : L\'ID est obligatoire pour supprimer un paiement.');
-            return;
+            throw new Error('L\'ID est obligatoire pour supprimer un paiement.');
         }
 
         const [result] = await connection.query('DELETE FROM payments WHERE id = ?', [id]);
@@ -93,7 +110,7 @@ async function deletePayment(id) {
             console.log('Paiement supprimé avec succès');
         }
     } catch (err) {
-        console.error('Erreur lors de la suppression du paiement:', err);
+        console.error('Erreur lors de la suppression du paiement:', err.message);
     }
 }
 
