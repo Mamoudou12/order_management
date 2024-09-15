@@ -221,7 +221,7 @@ async function paymentMenu() {
       case '2':
         const amount = readlineSync.question('Montant : ');
         const paymentDate = readlineSync.question('Date du paiement (YYYY-MM-DD) : ');
-        const paymentMethod = readlineSync.question('Méthode de paiement : ');
+        const paymentMethod = readlineSync.question('Méthode de paiement (credit_card / Bankily / Masrvi) :');
         const orderId = readlineSync.question('ID de la commande : ');
         await payment.addPayment(paymentDate, amount, paymentMethod, orderId);
         break;
