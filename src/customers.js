@@ -20,10 +20,10 @@ function validateCustomerFields(name, address, email, phone) {
     errors.push('L\'email est invalide.');
   }
 
-  // Vérification du téléphone (doit contenir uniquement des chiffres)
-  const phoneRegex = /^[0-9]+$/;
+  // Vérification du téléphone (doit contenir exactement 8 chiffres)
+  const phoneRegex = /^\d{8}$/;
   if (!phone || !phoneRegex.test(phone)) {
-    errors.push('Le numéro de téléphone doit contenir uniquement des chiffres.');
+    errors.push('Le numéro de téléphone doit contenir exactement 8 chiffres.');
   }
 
   return errors;
